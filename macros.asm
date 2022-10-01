@@ -25,7 +25,7 @@
 	call Print
 .end_macro
 
-.macro DebugInt(%label, %msg)
+.macro DebugInt(%msg, %label)
 
 .data
 	QUEBRA: .string  "\n"
@@ -38,13 +38,26 @@
 
 	li a7, 1
 	la a0, %label
-	lb a0, 0(t0)
+	lh a0, 0(a0)
 	ecall
 	
 	li a7, 4
 	la a0, QUEBRA
 	ecall
 	
+.end_macro
+
+.macro DebugString(%label)
+
+.data
+	QUEBRA: .string  "\n"
+	MSG: 	.string %msg
+.text
+	li a7, 4
+	la a0, MSG
+	ecall
+	la a0, QUEBRA
+	ecall
 .end_macro
 
 #################################################

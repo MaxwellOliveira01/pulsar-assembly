@@ -47,8 +47,6 @@ DecreaseHearts:
 	la t0, decHearts
 	lh t1, 0(t0)
 	beq t1, zero, DecreaseHeartsRet	
-
-	DebugInt(decHearts, "decHearts = ")
 	
 # Seta a flag para zero
 	sh zero, 0(t0)
@@ -58,6 +56,8 @@ DecreaseHearts:
 	lh t1, 0(t0)
 	addi t1, t1, -1
 	sh t1, 0(t0)
+	
+	DebugInt("Diminuindo vida, restam = ", heartsCur)
 	
 # Se a quantidade de vidas for zero, vai para gameover!!!
 	beq t1, zero, GameOver
@@ -86,13 +86,13 @@ DecreaseFuel:
 # Seta a flag para zero
 	sw zero, 0(t0)
 	
-	DebugInt(fuelCur, "fuel = ")
-
 # Diminue um do combustivel
 	la t0, fuelCur
 	lh t1, 0(t0)
 	addi t1, t1, -1
 	sh t1, 0(t0)
+	
+	DebugInt("Diminuindo combustivel, restam = ", fuelCur)
 	
 	bgt t1, zero, DecreaseFuelRet
 
