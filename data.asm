@@ -4,6 +4,7 @@ corFundo: 	.word 0x0			# cor do tile do fundo
 coordsMap: 	.word 0x0			# coordenadas inicias do mapa
 
 fuelStr:	.string "Fuel: "		# string que vai aparecer na tela
+lifeStr:	.string "Lifes: "		# string que vai aparecer na tela
 
 # Constantes da fase
 

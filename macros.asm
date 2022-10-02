@@ -1,8 +1,3 @@
-.macro getFrame(%reg)
-	li %reg, 0xFF200604
-	lh %reg, 0(%reg)
-.end_macro
-
 .macro DrawImageInBothFrames(%imgName, %coordsName)
 	la a0, %imgName
 	la t0, %coordsName
@@ -23,6 +18,27 @@
 	lw a3, 0(a3)
 	xori a3, a3, 1
 	call Print
+.end_macro
+
+.macro DrawString(%address, %x, %y)
+	la a0, %address
+	li a1, %y
+	li a2, %x
+	li a3, 0x0FF
+	li a4, 0xFF200604
+	lh a4, 0(a4)
+	li a7, 104
+	ecall
+	
+	la a0, %address
+	li a1, %y
+	li a2, %x
+	li a3, 0x0FF
+	li a4, 0xFF200604
+	lh a4, 0(a4)
+	xori a4, a4, 1
+	li a7, 104
+	ecall
 .end_macro
 
 .macro DebugInt(%msg, %label)

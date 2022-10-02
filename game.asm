@@ -11,26 +11,8 @@
 	DrawImageInBothFrames(key01,coordsKey1)
 	DrawImageInBothFrames(porta,coordsGate)
 	DrawImageInBothFrames(charDireita,charPos)
-	
-	la a0, fuelStr
-	li a1, 16
-	li a2, 217
-	li a3, 0x0FF
-	li a4, 0xFF200604
-	lh a4, 0(a4)
-	li a7, 104
-	ecall
-	
-	la a0, fuelStr
-	li a1, 16
-	li a2, 217
-	li a3, 0x0FF
-	li a4, 0xFF200604
-	lh a4, 0(a4)
-	xori a4, a4, 1
-	li a7, 104
-	ecall
-	
+	DrawString(fuelStr, 220, 96)
+	DrawString(lifeStr, 220, 16)
 	
 GameLoop: 
 
@@ -52,7 +34,8 @@ GameLoop:
 # Recarrega o contador de combustivel na tela
 	call UpdateVisualFuel 
 
-
+# Recarrega o contador de vida na tela
+	call UpdateVisualHearts
 
 # Inverte o frame
 	li t0, 0xFF200604
@@ -66,14 +49,39 @@ GameLoop:
 # Volta pro loop do jogo	
 	j GameLoop
 
+UpdateVisualHearts:
+	
+# Numero a ser printado
+	la a0, heartsCur
+	lh a0, 0(a0)
+	
+# Coluna e linha
+	li a1, 72
+	li a2, 220
+
+# Cor do texto
+	li a3, 0x0FF
+
+# Frame
+	li a4, 0xFF200604
+	lh a4, 0(a4)
+	xori a4, a4, 1
+
+# Ecall
+	li a7, 101
+	
+	ecall
+	
+	ret
+
 UpdateVisualFuel:
 
 # Apagar até 3 digitos do numero anterior
 # Podemos substituir esse bloco de codigo por apenas um for, bem mais elegante
-	
+# A ideia é desenhar dois tiles pra apapagar os digitos	
 	la a0, tile
-	li a1, 64
-	li a2, 217
+	li a1, 144
+	li a2, 220
 	li a3, 0xFF200604
 	lh a3, 0(a3)
 	xori a3, a3, 1
@@ -81,8 +89,8 @@ UpdateVisualFuel:
 	PRINT()
 	
 	la a0, tile
-	li a1, 80
-	li a2, 217
+	li a1, 160
+	li a2, 220
 	li a3, 0xFF200604
 	lh a3, 0(a3)
 	xori a3, a3, 1	
@@ -94,8 +102,8 @@ UpdateVisualFuel:
 	lh a0, 0(a0)
 	
 # Coluna e linha
-	li a1, 65
-	li a2, 217
+	li a1, 144
+	li a2, 220
 
 # Cor do texto
 	li a3, 0x0FF
