@@ -11,6 +11,9 @@
 	DrawImageInBothFrames(key01,coordsKey1)
 	DrawImageInBothFrames(porta,coordsGate)
 	DrawImageInBothFrames(charDireita,charPos)
+	DrawImageInBothFrames(inimigo1Direita, enemy1Pos)
+	DrawImageInBothFrames(inimigo2Direita, enemy2Pos)
+	
 	DrawString(fuelStr, 220, 96)
 	DrawString(lifeStr, 220, 16)
 	
@@ -37,6 +40,10 @@ GameLoop:
 # Recarrega o contador de vida na tela
 	call UpdateVisualHearts
 
+# Atualiza a posição do inimigo 1
+	call UpdateEnemy1
+
+
 # Inverte o frame
 	li t0, 0xFF200604
 	lh s0, 0(t0)
@@ -48,6 +55,98 @@ GameLoop:
 		
 # Volta pro loop do jogo	
 	j GameLoop
+
+UpdateEnemy1:
+	
+	li a7, 42
+	li a0, 50
+	li a1, 3
+	ecall
+	addi a0, a0, 1
+	#a0 é uma direção aleatória
+	
+	# Testa se a direção é direita
+	li t3, 16
+	li t4, 0
+	addi a0, a0, -1
+	beq a0, zero, UpdateEnemy1Continue
+	addi a0, a0, 1
+	
+	# Testa se a direção é cima
+	li t3, 0
+	li t4, -16
+	addi a0, a0, -2
+	beq a0, zero, UpdateEnemy1Continue
+	addi a0, a0, 2
+	
+	# Testa se a direção é esquerda
+	li t3, -16
+	li t4, 0
+	addi a0, a0, -3
+	beq a0, zero, UpdateEnemy1Continue
+	addi a0, a0, 3
+		
+	# Testa se a direção é baixo
+	li t3, 16
+	li t4, 0
+	addi a0, a0, -4
+	beq a0, zero, UpdateEnemy1Continue
+	addi a0, a0, 4	
+	
+UpdateEnemy1Continue:
+	
+	la t0, enemy1Pos			#Carrega o endereço do personagem
+	
+	# Impede de entrar nas bordas
+	lh t1,0(t0)				#Testando se ele vai sair pela esquerda
+        add t1,t1,t3
+        blt t1,zero,UpdateEnemy1Ret
+	li t2, 320				#Testando se ele vai sair pela direita
+       	bge t1,t2,UpdateEnemy1Ret 
+        lh t1,2(t0)				#Testando se ele vai sair por cima
+        add t1,t1,t4
+        blt t1,zero,UpdateEnemy1Ret
+       	li t2, 240				#Testando se ele vai sair por baixo
+        bge t1,t2,UpdateEnemy1Ret
+	
+	# Impede de atravessar paredes
+	li t1,0xFF000000			#Endereço base
+       	lh t2,0(t0)				#Carrega o x atual
+       	add t1,t1,t2				#t1 = endereço base + x
+        add t1,t1,t3				#add o movimento de x em t1
+       	lh t2,2(t0)				#carrega o y
+       	add t2,t2,t4				#add o movimento do y
+       	li t5, 320				#largura da tela
+       	mul t2,t2,t5				#320y
+       	add t1,t1,t2				#endereço base + x + incx + 320 * (y + incy)
+       	lb t2,0(t1)				#carrega a cor que tá naquela posição
+       	la t5, corFundo				#pega o endereço da cor do fundo
+       	lb t5,0(t5)				#Carrega a cor do fundo
+        bne t2,t5, UpdateEnemy1Ret		#se for parede, entao nao anda
+	
+# Altera a direção
+	la t0,enemy1Dir				#carrega a direção atual
+	sb t6,0(t0)				#salva a nova direção
+
+# Carrega as posições
+	la t0,enemy1Pos				#carrega o endereço da posição atual
+        la t1,oldEnemy1Pos			#carrega o endereço da posiçõ antiga
+
+# Altera a posição old
+       	lw t2,0(t0)				#Carrega a posição atual
+       	sw t2,0(t1)				#Salva a posição atual em OLD_CHAR_POS
+
+# Add o incremento em x
+        lh t1,0(t0)				#Carrega o x em t1
+       	add t1,t1,t3				#add o incremento no x
+       	sh t1,0(t0)				#Salva o novo x
+
+# Add o icremento em y
+       	lh t1,2(t0)				#Carrega o y em t1
+        add t1,t1,t4				#add o incremento no t
+       	sh t1,2(t0)				#Salva o novo y	
+	
+	UpdateEnemy1Ret: ret
 
 UpdateVisualHearts:
 	
@@ -401,6 +500,19 @@ PRINT_LINHA:
 .include "sprites/charEsquerda.s"
 .include "sprites/charDireita.s"
 .include "sprites/porta.s"
+
+.include "sprites/inimigo1Baixo.s"
+.include "sprites/inimigo1Cima.s"
+.include "sprites/inimigo1Direita.s"
+.include "sprites/inimigo1Esquerda.s"
+
+.include "sprites/inimigo2Baixo.s"
+.include "sprites/inimigo2Cima.s"
+.include "sprites/inimigo2Direita.s"
+.include "sprites/inimigo2Esquerda.s"
+
+
+
 
 .text
 .include "SYSTEMv21.s"

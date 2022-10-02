@@ -19,6 +19,15 @@ hearts:		.half 5				# quantidade de vidas que o player tem no começo do jogo
 gateLife:	.half 3				# quantidade de vidas que o portão tem no começo do jogo
 fuel:		.half 105			# quantidade de combustivel no começo
 
+enemy1Dir:	.word 1
+enemy1Pos:	.half 48, 48			# Posição do primeiro inimigo
+oldEnemy1Pos:	.half 48, 48			# Posição antiga do primeiro inimigo
+
+
+enemy2Dir: 	.word 1
+enemy2Pos:	.half 96, 48			# Posição do primeiro inimigo
+oldEnemy2Pos:	.half 96, 48			# Posição antiga do primeiro inimigo
+
 # Variaveis
 
 oldCharPos:	.word 0x00100010 		# x, y
