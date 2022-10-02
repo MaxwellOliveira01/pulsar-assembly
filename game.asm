@@ -12,6 +12,26 @@
 	DrawImageInBothFrames(porta,coordsGate)
 	DrawImageInBothFrames(charDireita,charPos)
 	
+	la a0, fuelStr
+	li a1, 16
+	li a2, 217
+	li a3, 0x0FF
+	li a4, 0xFF200604
+	lh a4, 0(a4)
+	li a7, 104
+	ecall
+	
+	la a0, fuelStr
+	li a1, 16
+	li a2, 217
+	li a3, 0x0FF
+	li a4, 0xFF200604
+	lh a4, 0(a4)
+	xori a4, a4, 1
+	li a7, 104
+	ecall
+	
+	
 GameLoop: 
 
 # Recebe do teclado
@@ -22,12 +42,17 @@ GameLoop:
 	
 # Verifica se pode abrir o portao
 	call OpenGate
-	
+			
 # Verifica a flag de combustivel
 	call DecreaseFuel
 	
 # Verifica a flag de vida
 	call DecreaseHearts
+	
+# Recarrega o contador de combustivel na tela
+	call UpdateVisualFuel 
+
+
 
 # Inverte o frame
 	li t0, 0xFF200604
@@ -40,6 +65,52 @@ GameLoop:
 		
 # Volta pro loop do jogo	
 	j GameLoop
+
+UpdateVisualFuel:
+
+# Apagar até 3 digitos do numero anterior
+# Podemos substituir esse bloco de codigo por apenas um for, bem mais elegante
+	
+	la a0, tile
+	li a1, 64
+	li a2, 217
+	li a3, 0xFF200604
+	lh a3, 0(a3)
+	xori a3, a3, 1
+	
+	PRINT()
+	
+	la a0, tile
+	li a1, 80
+	li a2, 217
+	li a3, 0xFF200604
+	lh a3, 0(a3)
+	xori a3, a3, 1	
+	
+	PRINT()	
+	
+# Numero a ser printado
+	la a0, fuelCur
+	lh a0, 0(a0)
+	
+# Coluna e linha
+	li a1, 65
+	li a2, 217
+
+# Cor do texto
+	li a3, 0x0FF
+
+# Frame
+	li a4, 0xFF200604
+	lh a4, 0(a4)
+	xori a4, a4, 1
+
+# Ecall
+	li a7, 101
+	
+	ecall
+	
+	ret
 
 DecreaseHearts:
 
