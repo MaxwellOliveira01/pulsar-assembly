@@ -27,10 +27,12 @@ fuel:		.half 105			# quantidade de combustivel no começo
 oldEnemy1Pos:	.half 64, 64			# Posição antiga do primeiro inimigo
 enemy1Pos:	.half 48, 48			# Posição do primeiro inimigo
 enemy1Dir:	.half 0
+enemy1Alive:	.half 1				# diz se o inimigo1 está vivo
 
 oldEnemy2Pos:	.half 96, 48			# Posição antiga do primeiro inimigo
 enemy2Pos:	.half 96, 48			# Posição do primeiro inimigo
 enemy2Dir: 	.half 0
+enemy2Alive:	.half 1				# diz se o inimigo2 está vivo
 
 oldCharPos:	.half 32, 32 			# x, y
 charPos:	.half 16, 16			# x, y
@@ -43,3 +45,11 @@ heartsCur:	.half 5				# quantidade atual de vidas
 
 decFuel:	.half 0x0			# Flag avisando para diminuir combustivel	
 decHearts: 	.half 0x0			# Flag avisando para diminuir uma vida
+
+shootPos:	.half 0,0			# Posição do tiro no mapa
+oldShootPos:	.half 0,0			# Posição antiga do tiro no mapa			
+shootAlive:	.half 0				# O tiro tá no mapa?
+incShoot:	.half 0,0			# Incremento em x e y para o tiro seguir a vida
+
+
+
