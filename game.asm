@@ -10,7 +10,6 @@
 	DrawImageInBothFrames(charDireita,charPos)
 	DrawImageInBothFrames(inimigo1Direita, enemy1Pos)
 	DrawImageInBothFrames(inimigo2Direita, enemy2Pos)
-
 	DrawString(fuelStr, 220, 96)
 	DrawString(lifeStr, 220, 16)
 
@@ -51,7 +50,7 @@ Sleep()
 	lb t0, 0(t0)
 	bne t0, zero, NoEnemyMoving
 
-# Atualiza a posição do inimigo 1
+# Atualiza a posiï¿½ï¿½o do inimigo 1
 	call UpdateEnemy1
 
 NoEnemyMoving:
@@ -62,6 +61,8 @@ Sleep()
 # Apaga o rastro do inimigo 1
 	DrawImageInBothFrames(tile, oldEnemy1Pos)
 
+	call DamageEnemy1
+
 Sleep()
 # Inverte o frame
 	li t0, 0xFF200604
@@ -70,7 +71,7 @@ Sleep()
 	sw s0, 0(t0)
 
 Sleep()
-
+# Sleep pro inimigo1
 	la t0, countingCycles
 	lb t0, 0(t0)
 	addi t0, t0, 1
@@ -82,30 +83,72 @@ Sleep()
 # Volta pro loop do jogo
 	j GameLoop
 
+DamageEnemy1:
+	
+# Carrega a posiÃ§Ã£o do inimigo1
+
+	la t0, charPos
+	lh t1, 0(t0) # x do personagem
+	lh t2, 2(t0) # y do personagem
+	
+	la t0, enemy1Pos
+	lh t3, 0(t0) # x do inimigo
+	lh t4, 2(t0) # y do inimigo
+	
+	sub t1, t1, t3 # diferenÃ§a em x
+	sub t2, t2, t4 # diferenÃ§a em y
+	
+	li t3, 16
+	div t1, t1, t3 # divide a diferenÃ§a por 16 (tamanho do bloco do jogo)
+	div t2, t2, t3
+				
+	mul t1, t1, t1
+	mul t2, t2, t2
+	
+	add t1, t1, t2	# soma dos quadrados das diferencas
+	
+	li t2, 1
+	
+	# DiferenÃ§a > 1, entao segue a vida
+	bgt t1, t2, DamageEnemy1Ret
+	
+	# Retirar t1 do combustivel
+	la t2, fuelCur
+	lh t3, 0(t2)
+	addi t3, t3, -1
+	sh t3, 0(t2)
+	
+	# Liga a flag do combustivel
+	la t0, decFuel
+	li t1, 1
+	sh t1, 0(t0)
+	
+	DamageEnemy1Ret: ret
+
 DrawEnemy1:
 # Responsavel por desenhar o inimigo1 no frame invertido
-#Carrega a direção do inimigo em t0
+#Carrega a direï¿½ï¿½o do inimigo em t0
 	la t0, enemy1Dir		
 	lb t0, 0(t0)
 	
-#testa se está para direita
+#testa se estï¿½ para direita
 	li t1, 0
 	la a0,inimigo1Direita				
 	beq t0, t1, DrawEnemy1Continue
-#testa se está para cima
+#testa se estï¿½ para cima
 	li t1,1						
 	la a0,inimigo1Cima				
 	beq t0, t1, DrawEnemy1Continue
-#testa se está para esquerda
+#testa se estï¿½ para esquerda
 	li t1,2						
 	la a0,inimigo1Esquerda			
 	beq t0, t1, DrawEnemy1Continue
-#Testa se está para baixo
+#Testa se estï¿½ para baixo
 	la a0,inimigo1Baixo
 	
 DrawEnemy1Continue:
 	
-	#a0 = endereço da imagem certa
+	#a0 = endereï¿½o da imagem certa
 	la t0, enemy1Pos
 	lh a1, 0(t0)
 	lh a2, 2(t0)
@@ -139,31 +182,31 @@ OkUpdateDirEnemy1:
 	li t0, 4
 	rem a0, a0, t0
 
-	#a0 é uma direção aleatória
+	#a0 ï¿½ uma direï¿½ï¿½o aleatï¿½ria
 	
 	la t0, enemy1Dir
 	lb t0, 0(t0)
 	bne t0, a0, NotSameEnemy1Dir
 
-	# Testa se a direção é direita
+	# Testa se a direï¿½ï¿½o ï¿½ direita
 	li t3, 16
 	li t4, 0
 	li t0, 0
 	beq a0, t0, UpdateEnemy1Continue
 
-	# Testa se a direção é cima
+	# Testa se a direï¿½ï¿½o ï¿½ cima
 	li t3, 0
 	li t4, -16
 	li t0, 1
 	beq a0, t0, UpdateEnemy1Continue
 
-	# Testa se a direção é esquerda
+	# Testa se a direï¿½ï¿½o ï¿½ esquerda
 	li t3, -16
 	li t4, 0
 	li t0, 2
 	beq a0, t0, UpdateEnemy1Continue
 
-	# Testa se a direção é baixo
+	# Testa se a direï¿½ï¿½o ï¿½ baixo
 	li t3, 0
 	li t4, 16
 	li t0, 3
@@ -171,7 +214,7 @@ OkUpdateDirEnemy1:
 
 UpdateEnemy1Continue:
 
-	la t0, enemy1Pos			#Carrega o endereço do personagem
+	la t0, enemy1Pos			#Carrega o endereï¿½o do personagem
 
 	# Impede de entrar nas bordas
 	lh t1,0(t0)				#Testando se ele vai sair pela esquerda
@@ -186,27 +229,32 @@ UpdateEnemy1Continue:
         bge t1,t2,UpdateEnemy1Ret
 
 	# Impede de atravessar paredes
-	li t1,0xFF000000			#Endereço base
+	li t1,0xFF000000			#Endereï¿½o base
        	lh t2,0(t0)				#Carrega o x atual
-       	add t1,t1,t2				#t1 = endereço base + x
+       	add t1,t1,t2				#t1 = endereï¿½o base + x
         add t1,t1,t3				#add o movimento de x em t1
        	lh t2,2(t0)				#carrega o y
        	add t2,t2,t4				#add o movimento do y
        	li t5, 320				#largura da tela
        	mul t2,t2,t5				#320y
-       	add t1,t1,t2				#endereço base + x + incx + 320 * (y + incy)
-       	lb t2,0(t1)				#carrega a cor que tá naquela posição
-       	la t5, corFundo				#pega o endereço da cor do fundo
+       	add t1,t1,t2				#endereï¿½o base + x + incx + 320 * (y + incy)
+       	lb t2,0(t1)				#carrega a cor que tï¿½ naquela posiï¿½ï¿½o
+       	la t5, corFundo				#pega o endereï¿½o da cor do fundo
        	lb t5,0(t5)				#Carrega a cor do fundo
         bne t2,t5, UpdateEnemy1Ret		#se for parede, entao nao anda
 
-# Carrega as posições
-	la t0,enemy1Pos				#carrega o endereço da posição atual
-        la t1,oldEnemy1Pos			#carrega o endereço da posiçõ antiga
+	# Impede do inimigo pegar as chaves
+        addi t1,t1,1				#pega exatamente a direita
+	lb t2,0(t1)				#pega a cor que estï¿½ naquela posiï¿½ï¿½o
+	bne t2, zero, UpdateEnemy1Ret
 
-# Altera a posição old
-       	lw t2,0(t0)				#Carrega a posição atual
-       	sw t2,0(t1)				#Salva a posição atual em oldEnemy1Pos
+# Carrega as posiï¿½ï¿½es
+	la t0,enemy1Pos				#carrega o endereï¿½o da posiï¿½ï¿½o atual
+        la t1,oldEnemy1Pos			#carrega o endereï¿½o da posiï¿½ï¿½ antiga
+
+# Altera a posiï¿½ï¿½o old
+       	lw t2,0(t0)				#Carrega a posiï¿½ï¿½o atual
+       	sw t2,0(t1)				#Salva a posiï¿½ï¿½o atual em oldEnemy1Pos
 
 # Add o incremento em x
         lh t1,0(t0)				#Carrega o x em t1
@@ -220,9 +268,9 @@ UpdateEnemy1Continue:
 
 NotSameEnemy1Dir:
 
-# Altera a direção
-	la t0,enemy1Dir				#carrega a direção atual
-	sb a0,0(t0)				#salva a nova direção
+# Altera a direï¿½ï¿½o
+	la t0,enemy1Dir				#carrega a direï¿½ï¿½o atual
+	sb a0,0(t0)				#salva a nova direï¿½ï¿½o
 
 
 	UpdateEnemy1Ret: ret
@@ -249,9 +297,9 @@ UpdateVisualHearts:
 	
 	ret
 UpdateVisualFuel:
-# Apagar até 3 digitos do numero anterior
+# Apagar atï¿½ 3 digitos do numero anterior
 # Podemos substituir esse bloco de codigo por apenas um for, bem mais elegante
-# A ideia é desenhar dois tiles pra apapagar os digitos	
+# A ideia ï¿½ desenhar dois tiles pra apapagar os digitos	
 	la a0, tile
 	li a1, 144
 	li a2, 220
@@ -289,6 +337,7 @@ UpdateVisualFuel:
 	ecall
 	
 	ret
+	
 DecreaseHearts:
 # Verifica a flag para diminuir
 	la t0, decHearts
@@ -297,26 +346,32 @@ DecreaseHearts:
 	
 # Seta a flag para zero
 	sh zero, 0(t0)
+	
 # Diminue a quantidade de vidas em um
 	la t0, heartsCur
 	lh t1, 0(t0)
 	addi t1, t1, -1
 	sh t1, 0(t0)
 	
-	DebugInt("Diminuindo vida, restam = ", heartsCur)
+	#DebugInt("Diminuindo vida, restam = ", heartsCur)
 	
 # Se a quantidade de vidas for zero, vai para gameover!!!
 	beq t1, zero, GameOver
+	
 # Reseta a quantidade de combustivel do personagem
 	la t0, fuel
 	lh t0, 0(t0)
 	la t1, fuelCur
 	sh t0, 0(t1)
+
 	DecreaseHeartsRet: ret
+
+
 GameOver:
 # Encerra o programa
 	li a7, 10
 	ecall
+	
 DecreaseFuel:
 	
 # Verifica a flag para diminuir
@@ -340,13 +395,14 @@ DecreaseFuel:
 	li t1, 1
 	sh t1, 0(t0)
 	DecreaseFuelRet: ret
+	
 OpenGate:
-# Verifica se a vida do portao é zero
+# Verifica se a vida do portao ï¿½ zero
 	la t0, gateLifeCur
 	lb t1, 0(t0)
-	bgt t1, zero, OpenGateRet
-# Se a vida for zero, então pode abrir o portão
-# Para não precisar abrir a cada loop, deixa o portao com -1 de vida
+	bne t1, zero, OpenGateRet
+# Se a vida for zero, entï¿½o pode abrir o portï¿½o
+# Para nï¿½o precisar abrir a cada loop, deixa o portao com -1 de vida
 	addi t1, t1, -1
 	sb t1, 0(t0)
 # Abre o portao	
@@ -360,30 +416,31 @@ OpenGate:
 	PRINT()
 		
 	OpenGateRet: ret
+	
 DrawChar:
 # Responsavel por desenhar o personagem no frame invertido
-#Carrega a direção do personagem em t0
+#Carrega a direï¿½ï¿½o do personagem em t0
 	la t0, charDir		
 	lb t0, 0(t0)
 	
-#testa se está para direita
+#testa se estï¿½ para direita
 	li t1, 0
 	la a0,charDireita				
 	beq t0, t1, DrawCharContinue
-#testa se está para cima
+#testa se estï¿½ para cima
 	li t1,1						
 	la a0,charCima				
 	beq t0, t1, DrawCharContinue
-#testa se está para esquerda
+#testa se estï¿½ para esquerda
 	li t1,2						
 	la a0,charEsquerda			
 	beq t0, t1, DrawCharContinue
-#Testa se está para baixo
+#Testa se estï¿½ para baixo
 	la a0,charBaixo
 	
 DrawCharContinue:
 	
-	#a0 = endereço da imagem certa
+	#a0 = endereï¿½o da imagem certa
 	la t0, charPos
 	lh a1, 0(t0)
 	lh a2, 2(t0)
@@ -402,7 +459,7 @@ UpdateChar:
 	lb t0, 0(t0)
 	bne t0, t6, NotSameCharDir
 
-	la t0, charPos				#Carrega o endereço do personagem
+	la t0, charPos				#Carrega o endereï¿½o do personagem
 	
 	
 # Impede de entrar nas bordas
@@ -418,33 +475,33 @@ UpdateChar:
         bge t1,t2,UpdateCharRet
 	
 # Impede de atravessar paredes
-	li t1,0xFF000000			#Endereço base
+	li t1,0xFF000000			#Endereï¿½o base
        	lh t2,0(t0)				#Carrega o x atual
-       	add t1,t1,t2				#t1 = endereço base + x
+       	add t1,t1,t2				#t1 = endereï¿½o base + x
         add t1,t1,t3				#add o movimento de x em t1
        	lh t2,2(t0)				#carrega o y
        	add t2,t2,t4				#add o movimento do y
        	li t5, 320				#largura da tela
        	mul t2,t2,t5				#320y
-       	add t1,t1,t2				#endereço base + x + incx + 320 * (y + incy)
-       	lb t2,0(t1)				#carrega a cor que tá naquela posição
-       	la t5, corFundo				#pega o endereço da cor do fundo
+       	add t1,t1,t2				#endereï¿½o base + x + incx + 320 * (y + incy)
+       	lb t2,0(t1)				#carrega a cor que tï¿½ naquela posiï¿½ï¿½o
+       	la t5, corFundo				#pega o endereï¿½o da cor do fundo
        	lb t5,0(t5)				#Carrega a cor do fundo
         bne t2,t5, UpdateCharRet		#se for parede, entao nao anda
         
 # Coleta as chaves
         addi t1,t1,1				#pega exatamente a direita
-	lb t2,0(t1)				#pega a cor que está naquela posição
-	la t5,gateLifeCur			#pega o endereço da vida do portao
+	lb t2,0(t1)				#pega a cor que estï¿½ naquela posiï¿½ï¿½o
+	la t5,gateLifeCur			#pega o endereï¿½o da vida do portao
 	lb t1,0(t5)				#carrega a vida do portao
-	sub t1,t1,t2				#remove o numero da posição
+	sub t1,t1,t2				#remove o numero da posiï¿½ï¿½o
 	sb t1,0(t5)				#salva a nova vida
-# Carrega as posições
-	la t0,charPos				#carrega o endereço da posição atual
-        la t1,oldCharPos			#carrega o endereço da posiçõ antiga
-# Altera a posição old
-       	lw t2,0(t0)				#Carrega a posição atual
-       	sw t2,0(t1)				#Salva a posição atual em OLD_CHAR_POS
+# Carrega as posiï¿½ï¿½es
+	la t0,charPos				#carrega o endereï¿½o da posiï¿½ï¿½o atual
+        la t1,oldCharPos			#carrega o endereï¿½o da posiï¿½ï¿½ antiga
+# Altera a posiï¿½ï¿½o old
+       	lw t2,0(t0)				#Carrega a posiï¿½ï¿½o atual
+       	sw t2,0(t1)				#Salva a posiï¿½ï¿½o atual em OLD_CHAR_POS
 # Add o incremento em x
         lh t1,0(t0)				#Carrega o x em t1
        	add t1,t1,t3				#add o incremento no x
@@ -459,9 +516,9 @@ UpdateChar:
 	sh t1, 0(t0)
 	
 NotSameCharDir:
-# Altera a direção
-	la t0,charDir				#carrega a direção atual
-	sb t6,0(t0)				#salva a nova direção
+# Altera a direï¿½ï¿½o
+	la t0,charDir				#carrega a direï¿½ï¿½o atual
+	sb t6,0(t0)				#salva a nova direï¿½ï¿½o
         UpdateCharRet: ret
 	
 Tec:		
@@ -474,30 +531,31 @@ Tec:
 	li t0,'w'
 	li t3, 0				# add em x para subir
 	li t4, -16				# add em y para subir
-	li t6, 1				# Nova direção
+	li t6, 1				# Nova direï¿½ï¿½o
 	beq t1,t0, UpdateChar			# se tecla pressionada for 'w', move pra cima
 		
 	li t0,'a'
 	li t3,-16				# add em x para ir pra esq			
 	li t4,0					# add em y para ir pra esq
-	li t6, 2				# Nova direção do personagem
+	li t6, 2				# Nova direï¿½ï¿½o do personagem
 	beq t1,t0,UpdateChar			# se tecla pressionada for 'a', move pra esquerda
 		
 	li t0,'s'
 	li t3,0					# add em x para descer
 	li t4,16				# add em y para descer
-	li t6,3					# Nova direção
+	li t6,3					# Nova direï¿½ï¿½o
 	beq t1,t0,UpdateChar			# se tecla pressionada for 's', move para descer
 		
 	li t0,'d'
 	li t3,16				# add em x para ir pra direita
 	li t4,0					# add em y pra ir pra direita
-	li t6,0					# Nova direção
+	li t6,0					# Nova direï¿½ï¿½o
 	beq t1,t0,UpdateChar			# se tecla pressionada for 'd', move para direita
 	
 FIM:	ret					# retorna
+
 #################################################
-#	a0 = endereço imagem			#
+#	a0 = endereï¿½o imagem			#
 #	a1 = x					#
 #	a2 = y					#
 #	a3 = frame (0 ou 1)			#
@@ -522,19 +580,19 @@ Print:
 	mv t3,zero			# zera t3
 	lw t4,0(a0)			# carrega a largura em t4
 	lw t5,4(a0)			# carrega a altura em t5
-PRINT_LINHA:	
+Print_Linha:	
 	lw t6,0(t1)			# carrega em t6 uma word (4 pixeis) da imagem
 	sw t6,0(t0)			# imprime no bitmap a word (4 pixeis) da imagem
 	addi t0,t0,4			# incrementa endereco do bitmap
 	addi t1,t1,4			# incrementa endereco da imagem
 	addi t3,t3,4			# incrementa contador de coluna
-	blt t3,t4,PRINT_LINHA		# se contador da coluna < largura, continue imprimindo
+	blt t3,t4,Print_Linha		# se contador da coluna < largura, continue imprimindo
 	addi t0,t0,320			# t0 += 320
 	sub t0,t0,t4			# t0 -= largura da imagem
 	# ^ isso serve pra "pular" de linha no bitmap display
 	mv t3,zero			# zera t3 (contador de coluna)
 	addi t2,t2,1			# incrementa contador de linha
-	bgt t5,t2,PRINT_LINHA		# se altura > contador de linha, continue imprimindo
+	bgt t5,t2,Print_Linha		# se altura > contador de linha, continue imprimindo
 	ret
 .data
 .include "sprites/tile.s"

@@ -69,6 +69,22 @@
 	
 .end_macro
 
+.macro DebugInt(%reg)
+
+.data
+	QUEBRA: .string  "\n"
+.text
+
+	li a7, 1
+	mv a0, %reg
+	ecall
+	
+	li a7, 4
+	la a0, QUEBRA
+	ecall
+	
+.end_macro
+
 .macro DebugString(%label)
 
 .data

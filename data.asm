@@ -24,7 +24,7 @@ fuel:		.half 105			# quantidade de combustivel no começo
 
 # Variaveis
 
-oldEnemy1Pos:	.half 48, 48			# Posição antiga do primeiro inimigo
+oldEnemy1Pos:	.half 64, 64			# Posição antiga do primeiro inimigo
 enemy1Pos:	.half 48, 48			# Posição do primeiro inimigo
 enemy1Dir:	.half 0
 
@@ -32,8 +32,8 @@ oldEnemy2Pos:	.half 96, 48			# Posição antiga do primeiro inimigo
 enemy2Pos:	.half 96, 48			# Posição do primeiro inimigo
 enemy2Dir: 	.half 0
 
-oldCharPos:	.half 32, 32 		# x, y
-charPos:	.half 16, 16		# x, y
+oldCharPos:	.half 32, 32 			# x, y
+charPos:	.half 16, 16			# x, y
 charDir: 	.half 0				# direção do char, Dir = 0, Cima = 1, Esq = 2, Baixo = 3
 
 gateLifeCur:	.half 3				# vida do portao
