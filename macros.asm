@@ -9,6 +9,12 @@
 	call Print
 .end_macro
 
+.macro Sleep()	
+	li a0, 0
+	li a7, 32
+	ecall
+.end_macro
+
 .macro DrawImageInHiddenFrame(%address, %coordsAddress)
 	la a0, %address
 	la t0, %coordsAddress

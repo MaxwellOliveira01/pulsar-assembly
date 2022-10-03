@@ -1,10 +1,13 @@
-# Global
+.data
+#Global
 
 corFundo: 	.word 0x0			# cor do tile do fundo
 coordsMap: 	.word 0x0			# coordenadas inicias do mapa
 
 fuelStr:	.string "Fuel: "		# string que vai aparecer na tela
 lifeStr:	.string "Lifes: "		# string que vai aparecer na tela
+
+countingCycles: .byte 0				# ciclos para movimento de inimigos
 
 # Constantes da fase
 
@@ -19,19 +22,18 @@ hearts:		.half 5				# quantidade de vidas que o player tem no começo do jogo
 gateLife:	.half 3				# quantidade de vidas que o portão tem no começo do jogo
 fuel:		.half 105			# quantidade de combustivel no começo
 
-enemy1Dir:	.word 1
-enemy1Pos:	.half 48, 48			# Posição do primeiro inimigo
-oldEnemy1Pos:	.half 48, 48			# Posição antiga do primeiro inimigo
-
-
-enemy2Dir: 	.word 1
-enemy2Pos:	.half 96, 48			# Posição do primeiro inimigo
-oldEnemy2Pos:	.half 96, 48			# Posição antiga do primeiro inimigo
-
 # Variaveis
 
-oldCharPos:	.word 0x00100010 		# x, y
-charPos:	.word 0x00100010		# x, y
+oldEnemy1Pos:	.half 48, 48			# Posição antiga do primeiro inimigo
+enemy1Pos:	.half 48, 48			# Posição do primeiro inimigo
+enemy1Dir:	.half 0
+
+oldEnemy2Pos:	.half 96, 48			# Posição antiga do primeiro inimigo
+enemy2Pos:	.half 96, 48			# Posição do primeiro inimigo
+enemy2Dir: 	.half 0
+
+oldCharPos:	.half 32, 32 		# x, y
+charPos:	.half 16, 16		# x, y
 charDir: 	.half 0				# direção do char, Dir = 0, Cima = 1, Esq = 2, Baixo = 3
 
 gateLifeCur:	.half 3				# vida do portao
