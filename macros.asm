@@ -10,7 +10,7 @@
 .end_macro
 
 .macro Sleep()	
-	li a0, 0
+	li a0, 2
 	li a7, 32
 	ecall
 .end_macro
@@ -85,7 +85,7 @@
 	
 .end_macro
 
-.macro DebugString(%label)
+.macro DebugString(%msg)
 
 .data
 	QUEBRA: .string  "\n"

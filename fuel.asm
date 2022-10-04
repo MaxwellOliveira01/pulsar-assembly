@@ -56,8 +56,6 @@ DecreaseFuel:
 	addi t1, t1, -1
 	sh t1, 0(t0)
 	
-	DebugInt("Diminuindo combustivel, restam = ", fuelCur)
-	
 	bgt t1, zero, DecreaseFuelRet
 # Se o combustivel for 0 -> ativa flag para diminuir uma vida		
 	la t0, decHearts

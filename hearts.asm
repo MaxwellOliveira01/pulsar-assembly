@@ -13,8 +13,6 @@ DecreaseHearts:
 	addi t1, t1, -1
 	sh t1, 0(t0)
 	
-	#DebugInt("Diminuindo vida, restam = ", heartsCur)
-	
 # Se a quantidade de vidas for zero, vai para gameover!!!
 	beq t1, zero, GameOver
 	

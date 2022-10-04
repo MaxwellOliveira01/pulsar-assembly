@@ -29,7 +29,7 @@ Tec:
 	li t6,0					# Nova dire��o
 	beq t1,t0,UpdateChar			# se tecla pressionada for 'd', move para direita
 	
-	li t0, ' '
+	li t0, 'x'
 	beq t1, t0, SetupShoot
 	
 FIM:	ret					# retorna

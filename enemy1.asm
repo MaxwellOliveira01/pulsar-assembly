@@ -1,7 +1,11 @@
 DamageEnemy1:
 	
+# Se nao estiver vivo, faz nada aqui
+	la t0, enemy1Alive
+	lh t0, 0(t0)
+	beq t0, zero, DamageEnemy1Ret
+	
 # Carrega a posição do inimigo1
-
 	la t0, charPos
 	lh t1, 0(t0) # x do personagem
 	lh t2, 2(t0) # y do personagem
@@ -44,7 +48,6 @@ DrawEnemy1:
 # Se o inimigo não estiver vivo, nao faz nada aqui
 	la t0, enemy1Alive
 	lh t0, 0(t0)
-	
 	beq t0, zero, DrawEnemy1Ret
 
 # Responsavel por desenhar o inimigo1 no frame invertido
@@ -84,6 +87,12 @@ DrawEnemy1Continue:
 	DrawEnemy1Ret: ret	
 
 UpdateEnemy1:
+
+# Se nao estiver vivo, faz nada
+	la t0, enemy1Alive
+	lh t0, 0(t0)
+	beq t0, zero, UpdateEnemy1Ret
+
 # Pega um numero aleatorio usando o ecall
 	li a7, 42
 	li a0, 0
