@@ -48,7 +48,7 @@ DecreaseFuel:
 	lh t1, 0(t0)	
 	beqz t1, DecreaseFuelRet
 # Seta a flag para zero
-	sw zero, 0(t0)
+	sh zero, 0(t0)
 	
 # Diminue um do combustivel
 	la t0, fuelCur

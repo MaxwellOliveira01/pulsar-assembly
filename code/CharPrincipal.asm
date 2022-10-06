@@ -36,6 +36,7 @@ DrawCharContinue:
 	
 	ret			
 UpdateChar:
+# Verifica se Mudou de direção
 	la t0, charDir
 	lb t0, 0(t0)
 	bne t0, t6, NotSameCharDir
@@ -100,4 +101,10 @@ NotSameCharDir:
 # Altera a direï¿½ï¿½o
 	la t0,charDir				#carrega a direï¿½ï¿½o atual
 	sb t6,0(t0)				#salva a nova direï¿½ï¿½o
+
+# Avisa que o personagem se moveu
+	la t0, charDidMove
+	li t1, 1
+	sh t1, 0(t0)
+
         UpdateCharRet: ret

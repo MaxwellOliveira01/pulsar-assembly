@@ -10,7 +10,7 @@
 .end_macro
 
 .macro Sleep()	
-	li a0, 2
+	li a0, 0
 	li a7, 32
 	ecall
 .end_macro

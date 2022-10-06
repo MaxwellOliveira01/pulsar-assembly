@@ -32,4 +32,7 @@ Tec:
 	li t0, 'x'
 	beq t1, t0, SetupShoot
 	
+	li t0, 'h'
+    	beq t1, t0, UseCheat
+	
 FIM:	ret					# retorna
